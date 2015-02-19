@@ -13,75 +13,73 @@ window.onload = function() {
     
     "use strict";
     
-    var game = new Phaser.Game( 800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
+    var game = new Phaser.Game( 1000, 800, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
     
     function preload() {
      
-        game.load.image( 'person', 'assets/person.png', 32 , 32 );
-        game.load.image( 'background', 'assets/background2.png' );
-        game.load.image('small_heart', 'assets/small_heart.png');
-        game.load.image('medium_heart', 'assets/medium_heart.png');
-        game.load.image('big_heart', 'assets/big_heart.png');
-        game.load.image('counter_back', 'assets/counter_back.png');
+        game.load.image( 'bot', 'assets/bot.png', 32 , 32 );
+        game.load.image( 'background', 'assets/background.png' );
+        game.load.image('polar-bear', 'assets/polar-bear.png');
+        game.load.image('eagle', 'assets/eagle.png');
+        game.load.image('lion', 'assets/lion.png');
         game.load.audio('music', ['assets/Avoidance.mp3', 'assets/Avoidance.ogg']);
         
         
         
     }
     
-    var person;
+    var bot;
     var background;
-    var counter_back;
-    var cursors;
     var upKey;
     var downKey;
     var leftKey;
     var rightKey;
     var regPosition;
     var run;
+    var spaceKey;
     var duration = 0;
-    var jumpButton;
-    var jumpTimer = 0;
     var counterText;
     var counter = 0;
-    var heartCounter = 0;
+    var enemyCounter = 0;
+    var hitCounter = 0;
+    var chaosCounter = 0;
     var gameOver = false;
-    var line;
-    var heartList = [];
-    var smallHeartBool = false;
-    var medHeartBool = false;
-    var bigHeartBool = false;
-    var music;
-    var jump;
+    var enemyList = [];
+    var eagleBool = false;
+    var polarBearBool = false;
+    var lionBool = false;
+    var style = { font: "25px arial", fill: "red", align: "center"};
+    var text;
+    var textDuration = 0;
+    var text2;
+    var text3;
     
     function create() {
-        run = 5;
+        run = 8;
        
-        background = game.add.sprite( '0', '0', 'background');
-        counter_back = game.add.sprite( 50, 50, 'counter_back');
-        person = game.add.sprite( game.world.centerX, 600, 'person' );
-
-        music = game.add.audio('music');
-        music.play();
        
-        game.physics.enable(person, Phaser.Physics.ARCADE);
-        person.body.collideWorldBounds = true;
+        createPlayer();
+        // music = game.add.audio('music');
+        // music.play();
+       
+     
        
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
-        person.col
+       
         upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
         downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
         leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
         rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+        spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         regPosition = true;
         duration = 5;
 
         //
-        counterText = game.add.text(55,58, 'Counter: 0', { font: "40px Arial", fill: "red", align: "center" });
+        counterText = game.add.text(55,58, 'Time: 0', { font: "40px Arial", fill: "red", align: "center" });
         game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
        
-        person.body.allowGravity = false;
+     
        
         
        
@@ -89,109 +87,157 @@ window.onload = function() {
 
     }
 
+    function createPlayer()
+    {
+        background = game.add.sprite( '0', '0', 'background');
+        bot = game.add.sprite( game.world.centerX, 600, 'bot' );
+        game.physics.enable(bot, Phaser.Physics.ARCADE);
+        bot.body.allowGravity = false;
+        bot.body.collideWorldBounds = true;
+    }
     function updateCounter()
     {
+        
         if(!gameOver)
         {
+            if(textDuration == 1)
+            {
+                text.destroy();
+            }
+            textDuration--;
             counter++;
-            heartCounter++;
-            counterText.setText('Counter: ' + counter);
+            enemyCounter++;
+            counterText.setText('Time: ' + counter);
+        }
+        else
+        {
+            chaosCounter++;
         }
     }
 
-    function shootHearts()
+    function shootEnemies()
     {
     
         
-        if(heartCounter == 0 && !smallHeartBool)
+        if(enemyCounter == 0 && !eagleBool)
         {
-            var smallHeart = game.add.sprite(game.rnd.integerInRange(0, 800), 0, 'small_heart');
-            game.physics.enable(smallHeart, Phaser.Physics.ARCADE);
-            smallHeart.body.collideWorldBounds = true;
-            smallHeart.body.gravity.y = 1000
-            smallHeart.body.velocity.setTo(game.rnd.integerInRange(100, 200),game.rnd.integerInRange(100, 200));
-            smallHeart.body.bounce.setTo(1,1);
-            heartList.push(smallHeart);
-            smallHeartBool = true;
-            bigHeartBool = false;
+            var eagle = game.add.sprite(game.rnd.integerInRange(0, 800), 0, 'eagle');
+            game.physics.enable(eagle, Phaser.Physics.ARCADE);
+            eagle.body.collideWorldBounds = true;
+           // smallHeart.body.gravity.y = 1000
+            eagle.body.velocity.setTo(game.rnd.integerInRange(150, 400),game.rnd.integerInRange(150, 400));
+            eagle.body.bounce.setTo(1,1);
+            enemyList.push(eagle);
+            eagleBool = true;
+            lionBool = false;
         }
-        else if(heartCounter == 7 && !medHeartBool)
+        else if(enemyCounter == 7 && !polarBearBool)
         {
-            var medHeart = game.add.sprite(game.rnd.integerInRange(0, 800), 0, 'medium_heart');
-            game.physics.enable(medHeart, Phaser.Physics.ARCADE);
-            medHeart.body.collideWorldBounds = true;
-            medHeart.body.gravity.y = 1000
-            medHeart.body.velocity.setTo(game.rnd.integerInRange(100, 200),game.rnd.integerInRange(100, 200));
-            medHeart.body.bounce.setTo(1,1);
-            heartList.push(medHeart);
-            medHeartBool = true;
+            var polarBear = game.add.sprite(1000, game.rnd.integerInRange(0, 400), 'polar-bear');
+            game.physics.enable(polarBear, Phaser.Physics.ARCADE);
+            polarBear.body.collideWorldBounds = true;
+           // medHeart.body.gravity.y = 1000
+            polarBear.body.velocity.setTo(game.rnd.integerInRange(150, 400),game.rnd.integerInRange(150, 400));
+            polarBear.body.bounce.setTo(1,1);
+            enemyList.push(polarBear);
+            polarBearBool = true;
         }
-        else if(heartCounter == 15 && !bigHeartBool)
+        else if(enemyCounter == 15 && !lionBool)
         {
-            var bigHeart = game.add.sprite(game.rnd.integerInRange(0, 800), 0, 'big_heart');
-            game.physics.enable(bigHeart, Phaser.Physics.ARCADE);
-            bigHeart.body.collideWorldBounds = true;
-            bigHeart.body.gravity.y = 1000
-            bigHeart.body.velocity.setTo(game.rnd.integerInRange(100, 200),game.rnd.integerInRange(100, 200));
-            bigHeart.body.bounce.setTo(1,1);
-            heartList.push(bigHeart);
+            var lion = game.add.sprite(0, game.rnd.integerInRange(0, 400), 'lion');
+            game.physics.enable(lion, Phaser.Physics.ARCADE);
+            lion.body.collideWorldBounds = true;
+         //   bigHeart.body.gravity.y = 1000
+            lion.body.velocity.setTo(game.rnd.integerInRange(150, 400),game.rnd.integerInRange(150, 400));
+            lion.body.bounce.setTo(1,1);
+            enemyList.push(lion);
 
-            bigHeartBool = true;
-            smallHeartBool = false;
-            medHeartBool = false;
-            heartCounter = -1;
+            lionBool = true;
+            eagleBool = false;
+            polarBearBool = false;
+            enemyCounter = -8;
         }
-        
+
+        if(gameOver && chaosCounter < 5)
+        {
+            var eagle = game.add.sprite(game.rnd.integerInRange(0, 800), 0, 'eagle');
+            game.physics.enable(eagle, Phaser.Physics.ARCADE);
+            eagle.body.collideWorldBounds = true;
+            eagle.body.velocity.setTo(game.rnd.integerInRange(150, 400),game.rnd.integerInRange(150, 400));
+            eagle.body.bounce.setTo(1,1);
+            enemyList.push(eagle);
+
+            var polarBear = game.add.sprite(1000, game.rnd.integerInRange(0, 400), 'polar-bear');
+            game.physics.enable(polarBear, Phaser.Physics.ARCADE);
+            polarBear.body.collideWorldBounds = true;
+            polarBear.body.velocity.setTo(game.rnd.integerInRange(150, 400),game.rnd.integerInRange(150, 400));
+            polarBear.body.bounce.setTo(1,1);
+            enemyList.push(polarBear);
+
+            var lion = game.add.sprite(0, game.rnd.integerInRange(0, 400), 'lion');
+            game.physics.enable(lion, Phaser.Physics.ARCADE);
+            lion.body.collideWorldBounds = true;
+            lion.body.velocity.setTo(game.rnd.integerInRange(150, 400),game.rnd.integerInRange(150, 400));
+            lion.body.bounce.setTo(1,1);
+            enemyList.push(lion);
+        }
+        else if (gameOver)
+        {
+            destroyEnemies();
+        }
+    
 
     }
     
 
     function update() {
-       shootHearts();
+        shootEnemies();
 
-       for( var i = 0; i < heartList.length; i++)
+       for(var i = 0; i < enemyList.length; i++)
        {
-         game.physics.arcade.collide(person, heartList[i], collisionHandler, null, this);
+         game.physics.arcade.collide(bot, enemyList[i], collisionHandler, null, this);
        }
          
-        customBounds(person);
-        if(counter % 38 == 0)
-        {
-            music.restart();
-        }
+        customBounds(bot);
+        // if(counter % 38 == 0)
+        // {
+        //     music.restart();
+        // }
 
-       
+        if(spaceKey.isDown)
+        {
+            resetGame();
+        }
         if (upKey.isDown)
         {
-           person.y -= run;
+           bot.y -= run;
+        }
+
+        if(downKey.isDown)
+        {
+            bot.y += run;
         }
 
         if (leftKey.isDown)
         {
             if(regPosition)
             {
-                person.scale.x = -1;
-                person.x += 45;
+                bot.scale.x = -1;
+                bot.x += 45;
                 regPosition = !regPosition;
             }
-            person.x -= run;
+            bot.x -= run;
         
-            
-            person.y += run;
-            
         }
         else if (rightKey.isDown)
         {
             if(!regPosition)
             {
-                person.scale.x = 1;
-                person.x -= 45;
+                bot.scale.x = 1;
+                bot.x -= 45;
                 regPosition = !regPosition;
             }
-            person.x += run;
-            
-            person.y += run;
-            
+            bot.x += run; 
         }
 
       
@@ -199,266 +245,80 @@ window.onload = function() {
        
     }
 
+    function resetGame()
+    {
+        destroyEnemies();
+        bot.destroy();
+        createPlayer();
+        counter = 0;
+        enemyCounter = 0;
+        hitCounter = 0;
+        chaosCounter = 0;
+        if(gameOver)
+        {
+            text.destroy();
+            text2.destroy();
+            text3.destroy();
+        }
+        else
+        {
+            counterText.destroy();
+        }
+        counterText = game.add.text(55,58, 'Time: 0', { font: "40px Arial", fill: "red", align: "center" });
+        gameOver = false;
+       
+
+    }
     function customBounds()
     {
-        if((person.x >= 0 && person.x <= 50) && person.y >= 350)
+        if(bot.y <= 300)
         {
-           if(person.y > 350)
-            {
-                if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
+            bot.y += run;
         }
-        else if ((person.x >= 51 && person.x <= 100))
-        {
-            
-            if(person.y > 375)
-            {
-                if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        else if ((person.x >= 101 && person.x <= 150))
-        {
-            if(person.y > 400)
-            {
-                if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        else if ((person.x >= 151 && person.x <= 200))
-        {
-            if(person.y > 425)
-            {
-                if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        else if ((person.x >= 201 && person.x <= 250))
-        {
-           if(person.y > 425)
-            {
-                if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        else if ((person.x >= 251 && person.x <= 300))
-        {
-           if(person.y > 440)
-            {
-                if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        else if ((person.x >= 301 && person.x <= 350))
-        {
-           if(person.y > 440)
-            {
-               if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        else if ((person.x >= 351 && person.x <= 400))
-        {
-           if(person.y > 430)
-            {
-                if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        if((person.x >= 401 && person.x <= 450) && person.y >= 350)
-        {
-          if(person.y > 420)
-            {
-               if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-        }
-        else if ((person.x >= 451 && person.x <= 500))
-        {
-            if(person.y > 400)
-            {
-                if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        else if ((person.x >= 501 && person.x <= 550))
-        {
-            if(person.y > 390)
-            {
-                if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        else if ((person.x >= 551 && person.x <= 600))
-        {
-            if(person.y > 375)
-            {
-                if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        else if ((person.x >= 601 && person.x <= 650))
-        {
-            if(person.y > 345)
-            {
-                if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        else if ((person.x >= 651 && person.x <= 700))
-        {
-            if(person.y > 330)
-            {
-               if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        else if ((person.x >= 701 && person.x <= 750))
-        {
-            if(person.y > 310)
-            {
-                if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
-        else if ((person.x >= 751 && person.x <= 800))
-        {
-            if(person.y > 290)
-            {
-               if(jump)
-                {
-                    person.body.allowGravity = false;
-                }
-                jump = false;
-              
-                person.y -= 10;
-            }
-            
-        }
+       
        
     }
 
-    function timeHandler ()
+    function destroyEnemies ()
     {
-
+        for( var j = 0; j < enemyList.length; j++)
+        {
+           enemyList[j].destroy();
+        }
+        lionBool = true;
+        eagleBool = false;
+        polarBearBool = false;
     }
+
     function collisionHandler (obj1, obj2) {
 
-        gameOver = true;
-        counterText.destroy();
-        counter_back.destroy();
-        game.add.tween(person.scale).to( { x: .005, y: .005 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
-        person.body.enable = false;
-        var style = { font: "25px arial", fill: "red", align: "center"};
-        var text = game.add.text( 50, game.world.centerY - 75, "Game Over!!!", style );
-        var text2 = game.add.text( 50, game.world.centerY - 25, "You lasted " + counter + " seconds!", style );
-        var text3 = game.add.text( 50, game.world.centerY + 25, "Press refresh page to try again...", style );
-        
-        // text.anchor.setTo( 0.5, 0.0 );
-        // text2.anchor.setTo( 0.5, 0.0 );
-        
-
+        hitCounter++;
+        if(hitCounter == 1)
+        {
+            text = game.add.text( 500, game.world.centerY - 75, "Hit!!!  2 Lives Left", style );
+            textDuration = 3;
+            enemyCounter = -4;
+            destroyEnemies();
+        }
+        else if(hitCounter == 2)
+        {
+            text = game.add.text( 500, game.world.centerY - 75, "Hit!!!  1 Life Left", style );
+            textDuration = 3;
+            enemyCounter = -4;
+            destroyEnemies();
+        }
+        else
+        {
+            gameOver = true;
+            counterText.destroy();
+           
+            game.add.tween(bot.scale).to( { x: .005, y: .005 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
+            bot.body.enable = false;
+            
+            text = game.add.text( 50, 200, "Game Over!!!", style );
+            text2 = game.add.text( 50, 250, "You lasted " + counter + " seconds!", style );
+            text3 = game.add.text( 50, 300, "Press the space bar to restart game!", style );
+        }
     }
-
-    function render() {
-
-        // game.debug.bodyInfo(dog, 32, 32);
-
-        // game.debug.body(dog);
-       
-
-    }
-
-
-
 
 };
