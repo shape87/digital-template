@@ -22,7 +22,6 @@ window.onload = function() {
         game.load.image('polar-bear', 'assets/polar-bear.png');
         game.load.image('eagle', 'assets/eagle.png');
         game.load.image('lion', 'assets/lion.png');
-        game.load.image('attacker','assets/Untitled.png');
         game.load.audio('music', ['assets/Avoidance.mp3', 'assets/Avoidance.ogg']);
         
         
@@ -54,7 +53,6 @@ window.onload = function() {
     var textDuration = 0;
     var text2;
     var text3;
-    var attacker;
     
     function create() {
         run = 8;
@@ -91,18 +89,11 @@ window.onload = function() {
 
     function createPlayer()
     {
-
         background = game.add.sprite( '0', '0', 'background');
         bot = game.add.sprite( game.world.centerX, 600, 'bot' );
-        attacker = game.add.sprite(game.world.centerX,100,'attacker');
         game.physics.enable(bot, Phaser.Physics.ARCADE);
         bot.body.allowGravity = false;
         bot.body.collideWorldBounds = true;
-        bot.body.immovable = true;
-        game.physics.enable(attacker, Phaser.Physics.ARCADE);
-        attacker.body.gravity.y = 300;
-        attacker.body.bounce.set(1);
-        attacker.body.collideWorldBounds = true;
     }
     function updateCounter()
     {
@@ -140,7 +131,7 @@ window.onload = function() {
             eagleBool = true;
             lionBool = false;
         }
-        else if(enemyCounter == 2 && !polarBearBool)
+        else if(enemyCounter == 7 && !polarBearBool)
         {
             var polarBear = game.add.sprite(1000, game.rnd.integerInRange(0, 400), 'polar-bear');
             game.physics.enable(polarBear, Phaser.Physics.ARCADE);
@@ -151,7 +142,7 @@ window.onload = function() {
             enemyList.push(polarBear);
             polarBearBool = true;
         }
-        else if(enemyCounter == 4 && !lionBool)
+        else if(enemyCounter == 15 && !lionBool)
         {
             var lion = game.add.sprite(0, game.rnd.integerInRange(0, 400), 'lion');
             game.physics.enable(lion, Phaser.Physics.ARCADE);
@@ -164,7 +155,7 @@ window.onload = function() {
             lionBool = true;
             eagleBool = false;
             polarBearBool = false;
-            enemyCounter = -2;
+            enemyCounter = -8;
         }
 
         if(gameOver && chaosCounter < 5)
@@ -205,11 +196,8 @@ window.onload = function() {
        for(var i = 0; i < enemyList.length; i++)
        {
          game.physics.arcade.collide(bot, enemyList[i], collisionHandler, null, this);
-         game.physics.arcade.collide(attacker, enemyList[i], attackHandler, null , this);
        }
          
-        game.physics.arcade.collide(attacker,bot,defendHandler,null,this);
-
         customBounds(bot);
         // if(counter % 38 == 0)
         // {
@@ -252,10 +240,7 @@ window.onload = function() {
             bot.x += run; 
         }
 
-        if (attacker.y >= 700)
-        {
-            attacker.body.velocity.setTo(50, 200);
-        }
+      
         
        
     }
@@ -310,17 +295,13 @@ window.onload = function() {
         hitCounter++;
         if(hitCounter == 1)
         {
-            game.add.tween(bot.scale).to( { x: 5, y: 5 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
-            text = game.add.text( 500, game.world.centerY - 75, "Whut?!?!? Hit!!!  2 Lives Left", style );
+            text = game.add.text( 500, game.world.centerY - 75, "Hit!!!  2 Lives Left", style );
             textDuration = 3;
             enemyCounter = -4;
             destroyEnemies();
-
-
         }
         else if(hitCounter == 2)
         {
-            game.add.tween(bot.scale).to( { x: .8, y: .8 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
             text = game.add.text( 500, game.world.centerY - 75, "Hit!!!  1 Life Left", style );
             textDuration = 3;
             enemyCounter = -4;
@@ -338,19 +319,6 @@ window.onload = function() {
             text2 = game.add.text( 50, 250, "You lasted " + counter + " seconds!", style );
             text3 = game.add.text( 50, 300, "Press the space bar to restart game!", style );
         }
-    }
-
-     function attackHandler (obj1, obj2) {
-
-        obj2.destroy();
-
-    }
-
-    function defendHandler(obj1,obj2){
-
-        
-
-
     }
 
 };
