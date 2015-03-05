@@ -16,20 +16,16 @@ window.onload = function() {
     var game = new Phaser.Game( 1000, 800, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
     
     function preload() {
-     
-        game.load.image( 'bot', 'assets/bot.png', 32 , 32 );
-        game.load.image( 'background', 'assets/background.png' );
-        game.load.image('polar-bear', 'assets/polar-bear.png');
-        game.load.image('eagle', 'assets/eagle.png');
-        game.load.image('lion', 'assets/lion.png');
-        game.load.image('attacker','assets/Untitled.png');
-        game.load.audio('music', ['assets/Avoidance.mp3', 'assets/Avoidance.ogg']);
-        
+        game.load.image('background', 'assets/background.png');
+        game.load.image('lava', 'assets/lava.png');
+        game.load.image('platform', 'assets/platform.png');
+        game.load.audio('music', ['assets/What Beats Lava-.mp3', 'assets/What Beats Lava-.ogg']);
+        game.load.spritesheet('bcMan', 'assets/BCSpriteSheet2.png',150,189);
         
         
     }
     
-    var bot;
+    var music;
     var background;
     var upKey;
     var downKey;
@@ -38,6 +34,7 @@ window.onload = function() {
     var regPosition;
     var run;
     var spaceKey;
+    var resetKey;
     var duration = 0;
     var counterText;
     var counter = 0;
@@ -45,312 +42,266 @@ window.onload = function() {
     var hitCounter = 0;
     var chaosCounter = 0;
     var gameOver = false;
-    var enemyList = [];
-    var eagleBool = false;
-    var polarBearBool = false;
-    var lionBool = false;
-    var style = { font: "25px arial", fill: "red", align: "center"};
+    var style = { font: "40px arial", fill: "black", align: "center"};
     var text;
     var textDuration = 0;
     var text2;
     var text3;
-    var attacker;
+    var lava;
+    var platform1;
+    var platform2;
+    var animation;
+    var burn = false;
+    var plat1Tween;
+    var plat2Tween;
+    var platform1Done = true;
+    var platform2Done = true;
+    var platSpeed = 0;
+    var score = 0;
+    var platBool = false;
+    var jumpBool = true;
     
     function create() {
-        run = 8;
-       
-       
-        createPlayer();
-        // music = game.add.audio('music');
-        // music.play();
-       
-     
-       
-        // Add some text using a CSS style.
-        // Center it in X, and position its top 15 pixels from the top of the world.
-       
+        music = game.add.audio('music');
+        music.play("",0,1,true,true);
+         background = game.add.sprite( '0', '0', 'background');
+
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+        game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
+        resetKey = game.input.keyboard.addKey(Phaser.Keyboard.R);
+
+        createGame();
+        
         upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
         downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
         leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
         rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
         spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        regPosition = true;
-        duration = 5;
-
-        //
-        counterText = game.add.text(55,58, 'Time: 0', { font: "40px Arial", fill: "red", align: "center" });
-        game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
-       
-     
-       
         
-       
-       // counterText.anchor.setTo(0.5, 0.5);
+
 
     }
 
-    function createPlayer()
+    function createGame()
     {
 
-        background = game.add.sprite( '0', '0', 'background');
-        bot = game.add.sprite( game.world.centerX, 600, 'bot' );
-        attacker = game.add.sprite(game.world.centerX,100,'attacker');
-        game.physics.enable(bot, Phaser.Physics.ARCADE);
-        bot.body.allowGravity = false;
-        bot.body.collideWorldBounds = true;
-        bot.body.immovable = true;
-        game.physics.enable(attacker, Phaser.Physics.ARCADE);
-        attacker.body.gravity.y = 300;
-        attacker.body.bounce.set(1);
-        attacker.body.collideWorldBounds = true;
+        //assets
+      
+        platform1 = game.add.sprite( 0, 600, 'platform');
+        platform2 = game.add.sprite(700,600, 'platform');
+        animation = game.add.sprite(0,200,'bcMan',5);
+        lava = game.add.sprite(0, 650, 'lava');
+        animation.animations.add('burn',[18,19,20,21,22,23,24,25,26,27,28,29,30,31],15,false);
+        animation.animations.add('walk',[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],15,true);
+    
+        //enable physics
+        game.physics.enable([animation,platform1,platform2,lava], Phaser.Physics.ARCADE);
+
+        animation.body.allowGravity = true;
+        animation.body.collideWorldBounds = true;
+        animation.body.gravity.y = 300;
+        run = 4;
+
+        platform1.body.immovable = true;
+        platform2.body.immovable = true;
+
+        //keys
+      
+        regPosition = true;
+       
+        counterText = game.add.text(50,150, 'Score: 0', { font: "40px Arial", fill: "black", align: "center" });
+       
+       
+        platSpeed = 1000;
+
     }
+
     function updateCounter()
     {
-        
         if(!gameOver)
         {
-            if(textDuration == 1)
-            {
-                text.destroy();
-            }
-            textDuration--;
             counter++;
-            enemyCounter++;
-            counterText.setText('Time: ' + counter);
-        }
-        else
-        {
-            chaosCounter++;
+            if (counter % 2 == 0)
+            {
+                platforms(1);
+            }
+            if (counter % 3 == 0)
+            {
+                platforms(2);
+            }
+            
         }
     }
 
-    function shootEnemies()
+    function platforms(choice)
     {
-    
-        
-        if(enemyCounter == 0 && !eagleBool)
+        if (plat1Tween == null && choice == 1)
         {
-            var eagle = game.add.sprite(game.rnd.integerInRange(0, 800), 0, 'eagle');
-            game.physics.enable(eagle, Phaser.Physics.ARCADE);
-            eagle.body.collideWorldBounds = true;
-           // smallHeart.body.gravity.y = 1000
-            eagle.body.velocity.setTo(game.rnd.integerInRange(150, 400),game.rnd.integerInRange(150, 400));
-            eagle.body.bounce.setTo(1,1);
-            enemyList.push(eagle);
-            eagleBool = true;
-            lionBool = false;
+           plat1Tween = game.add.tween(platform1);
+           plat1Tween.to({ x: game.rnd.integerInRange(-300, 200) }, platSpeed, Phaser.Easing.Linear.None, true, 0, platSpeed, true);
+           plat1Tween.start();
+           platSpeed -= 10;
         }
-        else if(enemyCounter == 2 && !polarBearBool)
+        else if(choice == 1)
         {
-            var polarBear = game.add.sprite(1000, game.rnd.integerInRange(0, 400), 'polar-bear');
-            game.physics.enable(polarBear, Phaser.Physics.ARCADE);
-            polarBear.body.collideWorldBounds = true;
-           // medHeart.body.gravity.y = 1000
-            polarBear.body.velocity.setTo(game.rnd.integerInRange(150, 400),game.rnd.integerInRange(150, 400));
-            polarBear.body.bounce.setTo(1,1);
-            enemyList.push(polarBear);
-            polarBearBool = true;
-        }
-        else if(enemyCounter == 4 && !lionBool)
-        {
-            var lion = game.add.sprite(0, game.rnd.integerInRange(0, 400), 'lion');
-            game.physics.enable(lion, Phaser.Physics.ARCADE);
-            lion.body.collideWorldBounds = true;
-         //   bigHeart.body.gravity.y = 1000
-            lion.body.velocity.setTo(game.rnd.integerInRange(150, 400),game.rnd.integerInRange(150, 400));
-            lion.body.bounce.setTo(1,1);
-            enemyList.push(lion);
-
-            lionBool = true;
-            eagleBool = false;
-            polarBearBool = false;
-            enemyCounter = -2;
+            plat1Tween.stop();
+            plat1Tween = null;
         }
 
-        if(gameOver && chaosCounter < 5)
+        if (plat2Tween == null && choice == 2)
         {
-            var eagle = game.add.sprite(game.rnd.integerInRange(0, 800), 0, 'eagle');
-            game.physics.enable(eagle, Phaser.Physics.ARCADE);
-            eagle.body.collideWorldBounds = true;
-            eagle.body.velocity.setTo(game.rnd.integerInRange(150, 400),game.rnd.integerInRange(150, 400));
-            eagle.body.bounce.setTo(1,1);
-            enemyList.push(eagle);
-
-            var polarBear = game.add.sprite(1000, game.rnd.integerInRange(0, 400), 'polar-bear');
-            game.physics.enable(polarBear, Phaser.Physics.ARCADE);
-            polarBear.body.collideWorldBounds = true;
-            polarBear.body.velocity.setTo(game.rnd.integerInRange(150, 400),game.rnd.integerInRange(150, 400));
-            polarBear.body.bounce.setTo(1,1);
-            enemyList.push(polarBear);
-
-            var lion = game.add.sprite(0, game.rnd.integerInRange(0, 400), 'lion');
-            game.physics.enable(lion, Phaser.Physics.ARCADE);
-            lion.body.collideWorldBounds = true;
-            lion.body.velocity.setTo(game.rnd.integerInRange(150, 400),game.rnd.integerInRange(150, 400));
-            lion.body.bounce.setTo(1,1);
-            enemyList.push(lion);
+            plat2Tween = game.add.tween(platform2);
+            plat2Tween.to({ x: game.rnd.integerInRange(600, 1100)}, platSpeed, Phaser.Easing.Linear.None, true, 0, platSpeed, true);
+            plat2Tween.resume();
+            platSpeed -= 10;
         }
-        else if (gameOver)
+        else if(choice == 2)
         {
-            destroyEnemies();
+            plat2Tween.stop();
+            plat2Tween  = null;
         }
-    
+    }
+
+
+
+    function walkAnimation()
+    {
+        if(upKey.isUp && downKey.isUp && leftKey.isUp && rightKey.isUp && burn == false)
+        {
+            animation.animations.stop(true,false);
+        }
+        else if(burn == false)
+        {
+            animation.animations.play('walk');
+        }
+    }
+
+    function burnAnimation()
+    {
+        burn = true;
+        if (!gameOver)
+        {
+            
+             animation.animations.play('burn',15,false,false);
+             gameOver = true;
+
+             counterText.destroy();
+           
+           
+             text = game.add.text( 50, 200, "Game Over!!!", style );
+             text2 = game.add.text( 50, 250, "Your score was: " + score, style );
+             text3 = game.add.text( 50, 300, "Press R to restart game!", style );
+
+        }
 
     }
-    
 
-    function update() {
-        shootEnemies();
-
-       for(var i = 0; i < enemyList.length; i++)
-       {
-         game.physics.arcade.collide(bot, enemyList[i], collisionHandler, null, this);
-         game.physics.arcade.collide(attacker, enemyList[i], attackHandler, null , this);
-       }
-         
-        game.physics.arcade.collide(attacker,bot,defendHandler,null,this);
-
-        customBounds(bot);
-        // if(counter % 38 == 0)
-        // {
-        //     music.restart();
-        // }
-
-        if(spaceKey.isDown)
+    function plat1Handler()
+    {
+        if(platBool)
         {
-            resetGame();
+            score++;
+            counterText.setText('Score: ' + score);
+            platBool = !platBool;
         }
-        if (upKey.isDown)
-        {
-           bot.y -= run;
-        }
+        jumpBool = true;
+    }
 
-        if(downKey.isDown)
+    function plat2Handler()
+    {
+        if(!platBool)
         {
-            bot.y += run;
+            score++;
+            counterText.setText('Score: ' + score);
+            platBool = !platBool;
         }
-
-        if (leftKey.isDown)
-        {
-            if(regPosition)
-            {
-                bot.scale.x = -1;
-                bot.x += 45;
-                regPosition = !regPosition;
-            }
-            bot.x -= run;
-        
-        }
-        else if (rightKey.isDown)
-        {
-            if(!regPosition)
-            {
-                bot.scale.x = 1;
-                bot.x -= 45;
-                regPosition = !regPosition;
-            }
-            bot.x += run; 
-        }
-
-        if (attacker.y >= 700)
-        {
-            attacker.body.velocity.setTo(50, 200);
-        }
-        
-       
+        jumpBool = true;
     }
 
     function resetGame()
     {
-        destroyEnemies();
-        bot.destroy();
-        createPlayer();
-        counter = 0;
-        enemyCounter = 0;
-        hitCounter = 0;
-        chaosCounter = 0;
         if(gameOver)
         {
             text.destroy();
-            text2.destroy();
+            text2.destroy()
             text3.destroy();
+            gameOver = false;
+            burn = false;
         }
         else
         {
             counterText.destroy();
         }
-        counterText = game.add.text(55,58, 'Time: 0', { font: "40px Arial", fill: "red", align: "center" });
-        gameOver = false;
-       
-
-    }
-    function customBounds()
-    {
-        if(bot.y <= 300)
-        {
-            bot.y += run;
-        }
-       
-       
+        platSpeed = 1000;
+        platBool = false;
+        score = 0;
+        animation.destroy();
+        platform1.destroy();
+        platform2.destroy();
+        counter = 0;
+        createGame();
     }
 
-    function destroyEnemies ()
-    {
-        for( var j = 0; j < enemyList.length; j++)
-        {
-           enemyList[j].destroy();
-        }
-        lionBool = true;
-        eagleBool = false;
-        polarBearBool = false;
-    }
+    function update() {
+     
+       game.physics.arcade.collide(animation, platform1, plat1Handler, null, this);
+       game.physics.arcade.collide(animation, platform2, plat2Handler, null, this);
+       game.physics.arcade.overlap(animation, lava, burnAnimation, null, this);
+      
 
-    function collisionHandler (obj1, obj2) {
+        walkAnimation();
+       
 
-        hitCounter++;
-        if(hitCounter == 1)
+        if(!gameOver)
         {
-            game.add.tween(bot.scale).to( { x: 5, y: 5 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
-            text = game.add.text( 500, game.world.centerY - 75, "Whut?!?!? Hit!!!  2 Lives Left", style );
-            textDuration = 3;
-            enemyCounter = -4;
-            destroyEnemies();
+            if (upKey.isDown)
+            {
+               animation.y -= run;
+               
+            }
 
-
-        }
-        else if(hitCounter == 2)
-        {
-            game.add.tween(bot.scale).to( { x: .8, y: .8 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
-            text = game.add.text( 500, game.world.centerY - 75, "Hit!!!  1 Life Left", style );
-            textDuration = 3;
-            enemyCounter = -4;
-            destroyEnemies();
-        }
-        else
-        {
-            gameOver = true;
-            counterText.destroy();
-           
-            game.add.tween(bot.scale).to( { x: .005, y: .005 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
-            bot.body.enable = false;
+            if (leftKey.isDown)
+            {
+                if(regPosition)
+                {
+                    animation.scale.x = -1;
+                    animation.x += 150;
+                    regPosition = !regPosition;
+                }
+                animation.x -= run;
             
-            text = game.add.text( 50, 200, "Game Over!!!", style );
-            text2 = game.add.text( 50, 250, "You lasted " + counter + " seconds!", style );
-            text3 = game.add.text( 50, 300, "Press the space bar to restart game!", style );
+            }
+            else if (rightKey.isDown)
+            {
+                if(!regPosition)
+                {
+                    animation.scale.x = 1;
+                    animation.x -= 150;
+                    regPosition = !regPosition;
+                }
+                animation.x += run; 
+            } 
+
+            if(spaceKey.isDown && jumpBool)
+            {
+                jumpBool = false;
+                if(regPosition)
+                {
+                    animation.body.velocity.setTo(0,-300);
+                }
+                else
+                {
+                    animation.body.velocity.setTo(0,-300);
+                }
+            }
         }
-    }
 
-     function attackHandler (obj1, obj2) {
-
-        obj2.destroy();
-
-    }
-
-    function defendHandler(obj1,obj2){
-
-        
-
+        if(resetKey.isDown)
+        {
+            resetGame();
+        }
 
     }
 
+   
 };
