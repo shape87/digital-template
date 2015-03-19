@@ -21,13 +21,12 @@ window.onload = function() {
         game.load.image('platform', 'assets/platform.png');
         game.load.audio('music', ['assets/What Beats Lava-.mp3', 'assets/What Beats Lava-.ogg']);
         game.load.spritesheet('bcMan', 'assets/BCSpriteSheet2.png',150,189);
-        game.load.spritesheet('bCry', 'assets/BCCrySprite.png',80,80);
+        
         
     }
     
     var music;
     var background;
-    var gameoverBackground;
     var upKey;
     var downKey;
     var leftKey;
@@ -38,7 +37,6 @@ window.onload = function() {
     var resetKey;
     var duration = 0;
     var counterText;
-    var deathText;
     var counter = 0;
     var enemyCounter = 0;
     var hitCounter = 0;
@@ -50,12 +48,9 @@ window.onload = function() {
     var text2;
     var text3;
     var lava;
-    var lava2;
-    var lava3;
     var platform1;
     var platform2;
     var animation;
-    var deathAnimation;
     var burn = false;
     var plat1Tween;
     var plat2Tween;
@@ -65,20 +60,17 @@ window.onload = function() {
     var score = 0;
     var platBool = false;
     var jumpBool = true;
-    var lives = 3;
-    var deathBool = false;
     
     function create() {
-        // music = game.add.audio('music');
-        // music.play("",0,1,true,true);
-       
-        background = game.add.sprite( '0', '0', 'background');
+        music = game.add.audio('music');
+        music.play("",0,1,true,true);
+         background = game.add.sprite( '0', '0', 'background');
 
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
         resetKey = game.input.keyboard.addKey(Phaser.Keyboard.R);
 
-        createGame(true);
+        createGame();
         
         upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
         downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
@@ -90,24 +82,15 @@ window.onload = function() {
 
     }
 
-    function createGame(totalReset)
+    function createGame()
     {
 
         //assets
-        lava = game.add.sprite(0, 630, 'lava');
-        var lavaTween = game.add.tween(lava);
-        lavaTween.to({ y: 670}, 2000, Phaser.Easing.Linear.None, true, 0, 2000, true);
-        lava2 = game.add.sprite(0, 640, 'lava');
-        var lavaTween2 = game.add.tween(lava2);
-        lavaTween2.to({ y: 670}, 1750, Phaser.Easing.Linear.None, true, 0, 2000, true);
+      
         platform1 = game.add.sprite( 0, 600, 'platform');
         platform2 = game.add.sprite(700,600, 'platform');
         animation = game.add.sprite(0,200,'bcMan',5);
-        lava3 = game.add.sprite(0, 650, 'lava');
-        var lavaTween3 = game.add.tween(lava3);
-        lavaTween3.to({ y: 670}, 1500, Phaser.Easing.Linear.None, true, 0, 2000, true);
-        
-       
+        lava = game.add.sprite(0, 650, 'lava');
         animation.animations.add('burn',[18,19,20,21,22,23,24,25,26,27,28,29,30,31],15,false);
         animation.animations.add('walk',[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],15,true);
     
@@ -121,18 +104,16 @@ window.onload = function() {
 
         platform1.body.immovable = true;
         platform2.body.immovable = true;
-        deathText = game.add.text(400,150, '',{ font: "40px Arial", fill: "black", align: "center" });
 
         //keys
       
         regPosition = true;
-        
-        if(totalReset)
-        {
-             counterText = game.add.text(50,150, 'Score: 0', { font: "40px Arial", fill: "black", align: "center" });
-             platSpeed = 1000;
-             
-        }
+       
+        counterText = game.add.text(50,150, 'Score: 0', { font: "40px Arial", fill: "black", align: "center" });
+       
+       
+        platSpeed = 1000;
+
     }
 
     function updateCounter()
@@ -148,29 +129,8 @@ window.onload = function() {
             {
                 platforms(2);
             }
-
-            if(deathBool && counter < 5)
-            {
-                if(lives == 2 )
-                {
-                    deathText.setText('You died!!!! ' + lives + ' lives left');
-                }
-                else
-                {
-                    deathText.setText('You died!!!! ' + lives + ' life left');
-                }
-                
-            }
-            else if(deathBool && counter >= 5)
-            {
-                deathBool = false;
-                deathText.setText(' ')
-                resetPlayer();
-            }
             
         }
-
-
     }
 
     function platforms(choice)
@@ -221,25 +181,17 @@ window.onload = function() {
         burn = true;
         if (!gameOver)
         {
-             if(!deathBool)
-             {
-                 animation.animations.play('burn',15,false,false);
-                 deathBool = true;
-                 lives--;
-                 counter = 0;
-                 if(lives < 1)
-                 {
-                     gameOver = true;
-                     counterText.destroy();
+            
+             animation.animations.play('burn',15,false,false);
+             gameOver = true;
 
-                        text = game.add.text( 50, 200, "Game Over!!!", style );
-                        text2 = game.add.text( 50, 250, "Your score was: " + score, style );
-                        text3 = game.add.text( 50, 300, "Press R to restart game!", style );
-                        deathAnimation = game.add.sprite(600,200,'bCry',10);
-                        deathAnimation.animations.add('cry',[0,1,2,3,4,5,6,7,8],15,true);
-                        deathAnimation.animations.play('cry');
-                 }
-             }
+             counterText.destroy();
+           
+           
+             text = game.add.text( 50, 200, "Game Over!!!", style );
+             text2 = game.add.text( 50, 250, "Your score was: " + score, style );
+             text3 = game.add.text( 50, 300, "Press R to restart game!", style );
+
         }
 
     }
@@ -274,7 +226,7 @@ window.onload = function() {
             text2.destroy()
             text3.destroy();
             gameOver = false;
-          
+            burn = false;
         }
         else
         {
@@ -287,22 +239,7 @@ window.onload = function() {
         platform1.destroy();
         platform2.destroy();
         counter = 0;
-        lives = 3;
-        deathText.setText(' ')
-        burn = false;
-        deathBool = false;
-        createGame(true);
-    }
-
-    function resetPlayer()
-    {
-        platSpeed = 1000;
-        platBool = false;
-        animation.destroy();
-        platform1.destroy();
-        platform2.destroy();
-        burn = false;
-        createGame(false);
+        createGame();
     }
 
     function update() {
@@ -315,7 +252,7 @@ window.onload = function() {
         walkAnimation();
        
 
-        if(!gameOver && !deathBool)
+        if(!gameOver)
         {
             if (upKey.isDown)
             {
