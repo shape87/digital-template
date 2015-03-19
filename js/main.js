@@ -69,8 +69,8 @@ window.onload = function() {
     var deathBool = false;
     
     function create() {
-        // music = game.add.audio('music');
-        // music.play("",0,1,true,true);
+        music = game.add.audio('music');
+        music.play("",0,1,true,true);
        
         background = game.add.sprite( '0', '0', 'background');
 
@@ -235,7 +235,9 @@ window.onload = function() {
                         text = game.add.text( 50, 200, "Game Over!!!", style );
                         text2 = game.add.text( 50, 250, "Your score was: " + score, style );
                         text3 = game.add.text( 50, 300, "Press R to restart game!", style );
-                        deathAnimation = game.add.sprite(600,200,'bCry',10);
+                        deathAnimation = game.add.sprite(600,200,'bCry',50);
+                        deathAnimation.scale.x = 3;
+                        deathAnimation.scale.y = 3;
                         deathAnimation.animations.add('cry',[0,1,2,3,4,5,6,7,8],15,true);
                         deathAnimation.animations.play('cry');
                  }
@@ -274,7 +276,7 @@ window.onload = function() {
             text2.destroy()
             text3.destroy();
             gameOver = false;
-          
+            deathAnimation.destroy();
         }
         else
         {
