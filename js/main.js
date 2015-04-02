@@ -21,7 +21,7 @@ window.onload = function() {
         game.load.image('lava2', 'assets/lava2.png');
         game.load.image('lava3', 'assets/lava3.png');
         game.load.image('platform', 'assets/platform.png');
-       // game.load.audio('music', ['assets/What Beats Lava-.mp3', 'assets/What Beats Lava-.ogg']);
+        game.load.audio('music', ['assets/What Beats Lava-.mp3', 'assets/What Beats Lava-.ogg']);
         game.load.spritesheet('bcMan', 'assets/BCSpriteSheet2.png',150,189);
         game.load.spritesheet('bCry', 'assets/BCCrySprite.png',80,80);
         game.load.spritesheet('finalPlatform', 'assets/finalPlatform.png');
