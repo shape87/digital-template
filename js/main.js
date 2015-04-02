@@ -80,8 +80,8 @@ window.onload = function() {
     var win = false;
     
     function create() {
-        // music = game.add.audio('music');
-        // music.play("",0,1,true,true);
+        music = game.add.audio('music');
+        music.play("",0,1,true,true);
        
         background = game.add.sprite( '0', '0', 'background');
        
