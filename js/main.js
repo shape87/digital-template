@@ -204,6 +204,7 @@ window.onload = function() {
         round = 1;
         tempCounter = 5;
         start = false;
+        gameOver = false;
        
        
         text.destroy();
