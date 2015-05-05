@@ -116,7 +116,7 @@ window.onload = function() {
         resetKey = game.input.keyboard.addKey(Phaser.Keyboard.R);
 
         level = 1;
-        createGame();
+        createGame(true);
        
         
         upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
@@ -129,9 +129,10 @@ window.onload = function() {
 
     }
 
-    function createGame(reset = true)
+    function createGame(reset)
     {
-        
+       
+
        if(level == 1)
        {
          level1(reset);
