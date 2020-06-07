@@ -2,7 +2,10 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Prestennial Man</title>
+    <title>Bicentennial Man</title>
+  <script src="https://code.jquery.com/jquery-3.5.1.js"
+          integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+          crossorigin="anonymous"></script>
     <script src="js/phaser.js"></script>
     <script src="js/main.js"></script>
 
@@ -16,68 +19,19 @@ body
 {
     margin-top: 10px;
 }
+.left
+{
+	float: left;
+}
 </style>
 
 </head>
 <body>
 <div id="game"></div>
-<div id="readme">
-<h2>Presetennial Man</h2>
-<ul>
-
-<li><strong>High Concept:</strong>
-Get your character to jump from platform to platform in order to reach the goal.
-</li>
-
-<li><strong>Player Experience Goals:</strong>
-To immerse the player in a themed environment and display comcial animation with platforming familiarity.
-</li>
-
-<li><strong>Genre:</strong>
-Action  Platformer
-</li>
-
-<li><strong>Game play:</strong>
-Jump from platform to platform in order to get Preston the Robot to the goal.  Press the arrow keys to move left and right, and space to jump.  
-You have three lives.  It is suggested to move with the paltforms because they may throw you off.  Watch out for bats that push you downward and spiralsthat pull you in their vortex!
-</li>
-
-<li><strong>Prototype goal:</strong>
-Reach the end
-</li>
-
-<li><strong>Features:</strong>
-Immersive environment, addictive gameplay, quick paced platforming fun.
-</li>
-
-<li><strong>Setting/Premise:</strong>
-Preston the Robot is researching a jungle so his lazy schoolboy owner Jimmy can do a book report.  Next thing you know, Preston sees an interesting sign but has to traverse a treachosrous arrangement of platforms to get therre.  Can Preston find his way out so his moron owner can get a C- on his assignment?
-</li>
-
-<li><strong>Story:</strong>
-Preston the overly optimistic robot will try anything to get his schoolboy owner Jimmy to do some studying for his book report on jungles.  With no options left Preston decided to go to the jungle himself while little Jimmy sits around and watches other people play video games streaming which is apparently a thing for some $%^$ing reason.
-Once at the jungle Preston sees a sign unlike any other.  Will he be able to reach the sign or will he fall victim to the razor sharps spikes or vortexes?
-</li>
-
-<li><strong>Target Audience:</strong>
-Casual gamers trying to have fun and appreciate simple games.
-</li>
-
-<li><strong>Play time:</strong>
-30 seconds to 90 seconds unless you are really bad.
-</li>
-
-<li><strong>Strategies:</strong>
-Be patient, the platforms and bats have an opening to jump, so take your time.
-
-<li><strong>Prototype Assets:</strong>
-Jungle Asset -http://www.freeimages.com/photo/1353712
-</li>
-
-<li><strong>Prototype Closest Other Game:</strong>
-</li>
-
-</ul>
+<div>
+	<button id="left-button" class="left" style="margin-right: 80px"><img src="images/left-arrow.png" /></button>
+    <button id="right-button" class="left" style="margin-right: 80px"><img src="images/right-arrow.png" /></button>
+	<button id="jump-button" ><img src="images/Jump.png" /></button>
 </div>
 </body>
 </html>

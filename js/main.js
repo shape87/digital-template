@@ -1,4 +1,4 @@
-window.onload = function() {
+$(function() {
     // You might want to start with a template that uses GameStates:
     //     https://github.com/photonstorm/phaser/tree/master/resources/Project%20Templates/Basic
     
@@ -108,6 +108,9 @@ window.onload = function() {
     var lava2;
     var lava3;
     var resetMusic = true;
+    var leftButtonP = false;
+    var rightButtonP = false;
+    var jumpButtonP = false;
     
     function create() {
         
@@ -124,10 +127,30 @@ window.onload = function() {
         leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
         rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
         spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        
-
 
     }
+
+    $(document).on('touchstart', '#left-button', function(){
+        leftButtonP = true;
+    });
+    $(document).on('touchend', '#left-button', function(e){
+        e.preventDefault();
+        leftButtonP = false;
+    });
+    $(document).on('touchstart', '#right-button', function(){
+        rightButtonP = true;
+    });
+    $(document).on('touchend', '#right-button', function(e){
+        e.preventDefault();
+        rightButtonP = false;
+    });
+    $(document).on('touchstart', '#jump-button', function(){
+        jumpButtonP = true;
+    });
+    $(document).on('touchend', '#jump-button', function(e){
+        e.preventDefault();
+        jumpButtonP = false;
+    });
 
     function createGame(reset)
     {
@@ -475,7 +498,8 @@ window.onload = function() {
 
     function walkAnimation()
     {
-        if(upKey.isUp && downKey.isUp && leftKey.isUp && rightKey.isUp && burn == false)
+        if(upKey.isUp && downKey.isUp && leftKey.isUp && rightKey.isUp && burn == false
+            && leftButtonP == false && rightButtonP == false && jumpButtonP == false)
         {
             animation.animations.stop(true,false);
         }
@@ -675,6 +699,7 @@ window.onload = function() {
 
         if(!gameOver && !deathBool && !win)
         {
+
             walkAnimation();
 
             if (upKey.isDown)
@@ -684,7 +709,7 @@ window.onload = function() {
             }
         
 
-            if (leftKey.isDown)
+            if (leftKey.isDown || leftButtonP)
             {
                 if(regPosition)
                 {
@@ -694,7 +719,7 @@ window.onload = function() {
                 animation.x -= run;
             
             }
-            else if (rightKey.isDown)
+            else if (rightKey.isDown || rightButtonP)
             {
                 if(!regPosition)
                 {
@@ -704,7 +729,7 @@ window.onload = function() {
                 animation.x += run; 
             }
 
-            if(spaceKey.isDown && jumpBool)
+            if((spaceKey.isDown || jumpButtonP) && jumpBool)
             {
                
                 if(regPosition)
@@ -743,4 +768,4 @@ window.onload = function() {
     }
 
    
-};
+});
