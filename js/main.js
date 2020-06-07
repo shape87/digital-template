@@ -178,8 +178,15 @@ $(function() {
                 if (music.context != null && music.context.state == 'running'){
                     resetMusic = false;
                 } else {
-                   music.destroy();
-                   music = null;
+                   if(touch){
+                       music.context.resume();
+                       if (music.context.state == 'running'){
+                             resetMusic = false;
+                       } 
+                   } else{
+                       music.destroy();
+                   }
+
                 }
             }
     }
