@@ -167,35 +167,35 @@ $(function() {
     }
 
     var playMusic = function(touch=false) {
-
          if(resetMusic)
-            {
+         {
                 music = game.add.audio('music');
+                console.log(music);
                 music.play("",0,1,true,true);
 
-                background = game.add.sprite( '0', '0', 'background');
-                game.world.setBounds(0, 0, 3000, 1200);
-                if (music.context != null && music.context.state == 'running'){
+                if(music.context != null && music.context.state == 'running'){
                     resetMusic = false;
                 } else {
-                   if(touch){
-                       music.context.resume();
-                       if (music.context.state == 'running'){
-                             resetMusic = false;
-                       } 
-                   } else{
-                       music.destroy();
-                   }
-
+                    if (touch) {
+                        music.context.resume();
+                        if (music.context.state == 'running'){
+                            resetMusic = false;
+                        } else {
+                            music.destroy();
+                        }
+                    }
                 }
-            }
+
+          }
     }
 
 
     function level1(totalReset)
     {
+        background = game.add.sprite( '0', '0', 'background');
+        game.world.setBounds(0, 0, 3000, 1200);
         playMusic();
-        $(document).on('click touchstart', 'body', function(){
+        $(document).on('click touch', 'body', function(){
             playMusic(true);
         });
         largePlats = game.add.group();
@@ -249,7 +249,7 @@ $(function() {
     {
         playMusic();
         $(document).on('click touch', 'body', function(){
-            playMusic(true);
+            playMusic();
         });
       
         // //assets
