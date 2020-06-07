@@ -111,6 +111,7 @@ $(function() {
     var leftButtonP = false;
     var rightButtonP = false;
     var jumpButtonP = false;
+    var audioContext;
     
     function create() {
         
@@ -165,17 +166,22 @@ $(function() {
        }
     }
 
-    var playMusic = function() {
+    var playMusic = function(touch=false) {
          if(resetMusic)
             {
 
                 music = game.add.audio('music');
+                console.log(music);
                 music.play("",0,1,true,true);
 
                 background = game.add.sprite( '0', '0', 'background');
                 game.world.setBounds(0, 0, 3000, 1200);
                 resetMusic = false;
             }
+
+          if(touch == true && music.context.state == 'suspended'){
+               music.context.resume();
+          }
     }
 
 
@@ -183,7 +189,7 @@ $(function() {
     {
         playMusic();
         $(document).on('click touch', 'body', function(){
-            playMusic();
+            playMusic(true);
         });
         largePlats = game.add.group();
         smallPlats = game.add.group();
@@ -236,7 +242,7 @@ $(function() {
     {
         playMusic();
         $(document).on('click touch', 'body', function(){
-            playMusic();
+            playMusic(true);
         });
       
         // //assets
