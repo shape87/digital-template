@@ -173,19 +173,18 @@ $(function() {
                 console.log(music);
                 music.play("",0,1,true,true);
 
-                if(music.context != null && music.context.state == 'running'){
+                if (music.context != null && music.context.state == 'running'){
                     resetMusic = false;
                 } else {
-                    if (touch) {
-                        music.context.resume();
-                        if (music.context.state == 'running'){
-                            resetMusic = false;
-                        } else {
-                            music.destroy();
-                        }
-                    }
+                   if(touch){
+                       music.context.resume();
+                       if (music.context.state == 'running'){
+                             resetMusic = false;
+                       }
+                   } else{
+                       music.destroy();
+                   }
                 }
-
           }
     }
 
