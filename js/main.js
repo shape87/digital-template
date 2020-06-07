@@ -167,7 +167,7 @@ $(function() {
     }
 
     var playMusic = function(touch=false) {
-         console.log(resetMusic)
+
          if(resetMusic)
             {
                 music = game.add.audio('music');
@@ -179,6 +179,7 @@ $(function() {
                     resetMusic = false;
                 } else {
                    music.destroy();
+                   music = null;
                 }
             }
     }
