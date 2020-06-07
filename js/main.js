@@ -188,7 +188,7 @@ $(function() {
     function level1(totalReset)
     {
         playMusic();
-        $(document).on('click touch', 'body', function(){
+        $(document).on('click touchstart', 'body', function(){
             playMusic(true);
         });
         largePlats = game.add.group();
