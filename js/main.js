@@ -154,7 +154,6 @@ $(function() {
 
     function createGame(reset)
     {
-       
 
        if(level == 1)
        {
@@ -164,24 +163,28 @@ $(function() {
        {
          level2(reset);
        }
-      
-
-       
     }
+
+    var playMusic = function() {
+         if(resetMusic)
+            {
+
+                music = game.add.audio('music');
+                music.play("",0,1,true,true);
+
+                background = game.add.sprite( '0', '0', 'background');
+                game.world.setBounds(0, 0, 3000, 1200);
+                resetMusic = false;
+            }
+    }
+
 
     function level1(totalReset)
     {
-        if(resetMusic)
-        {
-            music = game.add.audio('music');
-            music.play("",0,1,true,true);
-           
-            background = game.add.sprite( '0', '0', 'background');
-            game.world.setBounds(0, 0, 3000, 1200);
-            resetMusic = false;
-        }
-       
-
+        playMusic();
+        $(document).on('click touch', 'body', function(){
+            playMusic();
+        });
         largePlats = game.add.group();
         smallPlats = game.add.group();
         longPlats  = game.add.group();
@@ -231,15 +234,10 @@ $(function() {
 
     function level2(totalReset)
     {
-        if(resetMusic)
-        {
-            music = game.add.audio('music2');
-            music.play("",0,1,true,true);
-           
-            background = game.add.sprite( '0', '0', 'background2');
-            game.world.setBounds(0, 0, 3900, 1200);
-            resetMusic = false;
-        }
+        playMusic();
+        $(document).on('click touch', 'body', function(){
+            playMusic();
+        });
       
         // //assets
         lava = game.add.sprite(0, 1030, 'lava3');
@@ -763,9 +761,5 @@ $(function() {
         {
             resetGame();
         }
-
-    
     }
-
-   
 });
