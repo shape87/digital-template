@@ -176,7 +176,6 @@ $(function() {
                     resetMusic = false;
                 } else {
                    if (touch){
-                       $('#game').trigger('touchstart');
                        music.context.resume();
                        if (music.context.state == 'running'){
                            resetMusic = false;
