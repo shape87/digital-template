@@ -167,7 +167,7 @@ $(function() {
     }
 
     var playMusic = function(touch=false) {
-   
+
          if(resetMusic)
          {
                 music.play("",0,1,true,true);
@@ -175,11 +175,15 @@ $(function() {
                 if (music.context != null && music.context.state == 'running'){
                     resetMusic = false;
                 } else {
-                   if (touch && music.context.state != 'running'){
-                       music.context.resume();
-                       resetMusic = false;
+                   if (music.state != null) {
+                       if (touch && music.context.state != 'running'){
+                           music.context.resume();
+                           resetMusic = false;
+                       } else{
+                           music.destroy();
+                       }
                    } else{
-                       music.destroy();
+                        music.destroy();
                    }
                 }
           }
