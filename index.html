@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
     <title>Bicentennial Man</title>
   <script src="https://code.jquery.com/jquery-3.5.1.js"
           integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
@@ -15,21 +16,32 @@ body
     color: #777;
     font-family: "Avenir", Verdana, sans-serif;
 }
-#readme
-{
-    margin-top: 10px;
+
+html, body {
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
+
 .left
 {
 	float: left;
 }
+#game{
+    position:relative;
+    height: 1028px;
+}
+#buttons{
+    position: absolute;
+    bottom: 0;
+}
+
 </style>
 
 </head>
 <body>
-<div id="game"></div>
-<div>
-	<button id="left-button" class="left"
+<div id="game">
+    <div id="buttons">
+    <button id="left-button" class="left"
             style="margin-right: 80px; background: url(images/left-arrow.png) no-repeat;
                    width: 225px; height: 225px">
     </button>
@@ -40,6 +52,8 @@ body
 	<button id="jump-button" style="background: url(images/Jump.png) no-repeat;
             width: 300px; height: 225px">
     </button>
+    </div>
 </div>
+
 </body>
 </html>

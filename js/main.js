@@ -175,7 +175,15 @@ $(function() {
                 if (music.context != null && music.context.state == 'running'){
                     resetMusic = false;
                 } else {
-                   music.destroy();
+                   if (touch){
+                       $('#game').trigger('touchstart');
+                       music.context.resume();
+                       if (music.context.state == 'running'){
+                           resetMusic = false;
+                       }
+                   } else{
+                       music.destroy();
+                   }
                 }
           }
     }
@@ -186,7 +194,7 @@ $(function() {
         background = game.add.sprite( '0', '0', 'background');
         game.world.setBounds(0, 0, 3000, 1200);
         playMusic();
-        $(document).on('click touch', 'body', function(){
+        $(document).on('click touchstart', 'body', function(){
             playMusic(true);
         });
         largePlats = game.add.group();
