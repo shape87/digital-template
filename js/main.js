@@ -167,19 +167,17 @@ $(function() {
     }
 
     var playMusic = function(touch=false) {
+   
          if(resetMusic)
          {
-                music = game.add.audio('music');
                 music.play("",0,1,true,true);
 
                 if (music.context != null && music.context.state == 'running'){
                     resetMusic = false;
                 } else {
-                   if (touch){
+                   if (touch && music.context.state != 'running'){
                        music.context.resume();
-                       if (music.context.state == 'running'){
-                           resetMusic = false;
-                       }
+                       resetMusic = false;
                    } else{
                        music.destroy();
                    }
@@ -190,12 +188,18 @@ $(function() {
 
     function level1(totalReset)
     {
+
         background = game.add.sprite( '0', '0', 'background');
         game.world.setBounds(0, 0, 3000, 1200);
+        music = game.add.audio('music');
         playMusic();
         $(document).on('click touchstart', 'body', function(){
             playMusic(true);
         });
+
+        $('#game').trigger('touchstart');
+        $('#game').trigger('touchstart');
+
         largePlats = game.add.group();
         smallPlats = game.add.group();
         longPlats  = game.add.group();
