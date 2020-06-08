@@ -170,21 +170,21 @@ $(function() {
 
          if(resetMusic)
          {
-                music.play("",0,1,true,true);
+                if (music.context != null)
+                {
+                    music.play("",0,1,true,true);
 
-                if (music.context != null && music.context.state == 'running'){
-                    resetMusic = false;
-                } else {
-                   if (music.state != null) {
-                       if (touch && music.context.state != 'running'){
-                           music.context.resume();
-                           resetMusic = false;
-                       } else{
-                           music.destroy();
+                    if (music.context.state == 'running'){
+                        resetMusic = false;
+                    } else {
+                           if (touch && music.context.state != 'running'){
+                               music.context.resume();
+                               resetMusic = false;
+                           } else{
+                               music.destroy();
+                           }
                        }
-                   } else{
-                        music.destroy();
-                   }
+
                 }
           }
     }
