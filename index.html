@@ -19,11 +19,21 @@ body
 .left
 {
 	float: left;
+	z-index: 100;
+}
+
+#loading{
+   position: absolute;
+   left: 100;
+   top: 100;
+   width: 1000px;
+   height: 1000px;
 }
 </style>
 
 </head>
 <body>
+<img id="loading" src="images/loading.gif">
 <div id="game"></div>
 <div>
 	<button id="left-button" class="left"

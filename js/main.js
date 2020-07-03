@@ -16,7 +16,11 @@ $(function() {
     var game = new Phaser.Game( 1000, 800, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
     
      function preload() {
-        
+
+        //All levels
+        game.load.image('tryagain', 'assets/tryagain.png')
+        game.load.image('nextlevel', 'assets/nextlevel.png')
+
         //level 1
         game.load.spritesheet('bcMan2', 'assets/BCSpriteSheet2.png',150,189);
         game.load.image('background', 'assets/jungle_back.png');
@@ -30,6 +34,7 @@ $(function() {
         game.load.spritesheet('flag', 'assets/flag.png');
         game.load.spritesheet('bat', 'assets/batsheet.png',200,85);
         game.load.spritesheet('spiral', 'assets/spiral.png');
+        game.load.image('')
 
         //level 2
         game.load.spritesheet('bcMan2', 'assets/BCSpriteSheet2.png',150,189);
@@ -112,6 +117,10 @@ $(function() {
     var rightButtonP = false;
     var jumpButtonP = false;
     var audioContext;
+    var tryAgainButton;
+    var nextLevelButton;
+    var start = false;
+    var end = false;
     
     function create() {
         
@@ -155,7 +164,23 @@ $(function() {
 
     function createGame(reset)
     {
+        if (end == true){
+            end = false;
+        }
+        if (tryAgainButton == null){
+           tryAgainButton = game.add.button(400, 450, 'tryagain', resetGame);
+           tryAgainButton.fixedToCamera = true;
+           tryAgainButton.inputEnabled = false;
+           tryAgainButton.visible = false;
+       }
+       if(nextLevelButton == null){
+           nextLevelButton = game.add.button(400, 450, 'nextlevel', resetGame);
+           nextLevelButton.fixedToCamera = true;
+           nextLevelButton.inputEnabled = false;
+           nextLevelButton.visible = false;
+        }
 
+       $('#loading').hide();
        if(level == 1)
        {
          level1(reset);
@@ -195,6 +220,7 @@ $(function() {
 
         background = game.add.sprite( '0', '0', 'background');
         game.world.setBounds(0, 0, 3000, 1200);
+
         music = game.add.audio('music');
         playMusic();
         $(document).on('click touchstart', 'body', function(){
@@ -207,7 +233,7 @@ $(function() {
         largePlats = game.add.group();
         smallPlats = game.add.group();
         longPlats  = game.add.group();
-       
+
 
         makePlats();
 
@@ -218,46 +244,59 @@ $(function() {
         spirals();
 
         spikes = game.add.sprite(0,1106,'spikes');
-        spikes2 = game.add.sprite(-25,1118,'spikes');
-        animation = game.add.sprite(0,0,'bcMan',5);
+        spikes2 = game.add.sprite(-25,1118,'spikes')
 
-       
+
+        animation = game.add.sprite(0,0,'bcMan',5);
+        game.world.sendToBack(animation);
         spikes3 = game.add.sprite(-50,1130,'spikes');
 
-        
+
         animation.anchor.setTo(0.5,0.5);
-        game.camera.follow(animation);
-        
-       
         animation.animations.add('split',[18,19,20,21,22,23,24,25,26,27],15,false);
         animation.animations.add('walk',[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],15,true);
 
         game.physics.enable([animation,spikes], Phaser.Physics.ARCADE);
-       
-        animation.body.allowGravity = true;
+
         animation.body.collideWorldBounds = true;
-        animation.body.gravity.y = 1000;
+
+
         run = 4;
 
-        spikes.body.immovable = true; 
+        spikes.body.immovable = true;
         deathText = game.add.text(400,450, '',style);
         regPosition = true;
-        
+
+        start = false;
+        setTimeout(function(){
+             start = true;
+             game.world.bringToTop(animation);
+             game.world.bringToTop(spikes3);
+             animation.body.allowGravity = true;
+             animation.body.gravity.y = 1000;
+             game.camera.follow(animation);
+        }, 1000)
+
         if(totalReset)
         {
-             counterText = game.add.text(50,50, 'Level ' + level + '    Lives ' + lives + '    Time: ' + timer, 
+             counterText = game.add.text(50,50, 'Level ' + level + '    Lives ' + lives + '    Time: ' + timer,
                 { font: "30px Arial", fill: "black", align: "center" });
-             counterText.fixedToCamera = true;  
+             game.world.sendToBack(counterText);
+             counterText.fixedToCamera = true;
         }
     }
 
     function level2(totalReset)
     {
+
+        background = game.add.sprite( '0', '0', 'background2');
+        game.world.setBounds(0, 0, 3900, 1200);
+        music = game.add.audio('music2');
         playMusic();
         $(document).on('click touch', 'body', function(){
             playMusic();
         });
-      
+
         // //assets
         lava = game.add.sprite(0, 1030, 'lava3');
         var lavaTween = game.add.tween(lava);
@@ -278,25 +317,37 @@ $(function() {
 
         bats();
 
-        animation = game.add.sprite(0,900,'bcMan2',5);
-   
-        animation.anchor.setTo(0.5,0.5);
-        game.camera.follow(animation);
+        animation = game.add.sprite(0,0,'bcMan2',5);
+        game.world.sendToBack(animation);
         lava3 = game.add.sprite(0, 1050, 'lava');
+
+        start = false;
+        setTimeout(function(){
+             start = true;
+             game.world.bringToTop(animation);
+             game.world.bringToTop(lava3);
+             animation.body.allowGravity = true;
+             animation.body.gravity.y = 1000;
+             game.camera.follow(animation);
+        }, 1000)
+
+
+
+        animation.anchor.setTo(0.5,0.5);
+
+
         var lavaTween3 = game.add.tween(lava3);
         lavaTween3.to({ y: 1070}, 1500, Phaser.Easing.Linear.None, true, 0, 2000, true);
-        
-       
+
+
         animation.animations.add('burn',[18,19,20,21,22,23,24,25,26,27,28,29,30,31],15,false);
         animation.animations.add('walk',[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],15,true);
-    
+
         //enable physics
         game.physics.enable([animation,platform1,platform2,platform3,platform4,platform5,
             endPlatform,lava,flag], Phaser.Physics.ARCADE);
 
-        animation.body.allowGravity = true;
         animation.body.collideWorldBounds = true;
-        animation.body.gravity.y = 1000;
         run = 4;
 
         platform1.body.immovable = true;
@@ -304,23 +355,22 @@ $(function() {
         platform3.body.immovable = true;
         platform4.body.immovable = true;
         platform5.body.immovable = true;
-        
+
         deathText = game.add.text(400,450, '',{ font: "40px Arial", fill: "black", align: "center" });
-       
+
         spirals();
-      
+
         regPosition = true;
-        
+
         if(totalReset)
         {
-             counterText = game.add.text(50,50, 'Level ' + level + '   Lives ' + lives + '   Time: ' + timer, 
+             counterText = game.add.text(50,50, 'Level ' + level + '   Lives ' + lives + '   Time: ' + timer,
               { font: "30px Arial", fill: "black", align: "center" });
-             counterText.fixedToCamera = true;
              platSpeed = 1000;
-             
+
         }
         platforms();
-       
+
 
     }
 
@@ -337,17 +387,17 @@ $(function() {
             // lnPlat.body.immovable = true;
         }
         var lPlatPos = [0, 400, 2600, 400];
-        
-        var lPlat = largePlats.create(lPlatPos[0],lPlatPos[1],'large_plat',0);   
+
+        var lPlat = largePlats.create(lPlatPos[0],lPlatPos[1],'large_plat',0);
         game.physics.enable(lPlat, Phaser.Physics.ARCADE);
         lPlat.body.setSize(420,59,0,10);
         lPlat.body.immovable = true;
 
         endPlat = game.add.sprite(lPlatPos[2],lPlatPos[3],'large_plat',0);
         game.physics.enable(endPlat, Phaser.Physics.ARCADE);
-        endPlat.body.immovable = true;    
+        endPlat.body.immovable = true;
 
-        
+
 
         var sPlatPos = [700, 400, 1400, 500, 2100, 400];
         for (var i = 0; i < 3; i++)
@@ -366,7 +416,7 @@ $(function() {
                 {
                     game.add.tween(sPlat).to( {x: sPlat.x - 300, y: sPlat.y + 100 }, 1500, Phaser.Easing.Linear.None, true, 0, 500, true);
                 }
-             
+
             }
         }
     }
@@ -374,7 +424,7 @@ $(function() {
     //----------------------------Level two platforms
     function platforms()
     {
-        
+
           //  plat1Tween = game.add.tween(platform1);
             plat2Tween = game.add.tween(platform2);
             plat3Tween = game.add.tween(platform3);
@@ -386,42 +436,71 @@ $(function() {
             plat3Tween.to({ y: 800 }, platSpeed, Phaser.Easing.Linear.None, true, 0, platSpeed, true);
             plat4Tween.to({ y: 750 }, platSpeed + 100, Phaser.Easing.Linear.None, true, 0, platSpeed, true);
             plat5Tween.to({ y: 625 }, platSpeed, Phaser.Easing.Linear.None, true, 0, platSpeed, true);
-        
+
     }
 
     function updateCounter()
     {
-        if(!deathBool && !win && !gameOver)
-        {
-            timer++;
-            counterText.setText('Level ' + level + '   Lives ' + lives + '   Time: ' + timer);
-        }
-        if(lives < 1 && !gameOver)
-        {
-            endGame();
-        }
-        if(!gameOver && !win)
-        {
-            counter++;
-           
-            if(deathBool)
+        if (start){
+            if(!deathBool && !win && !gameOver)
             {
-                if(lives == 2 )
-                {
-                    deathText.position.x = game.camera.position.x;
-                    deathText.setText('You died!!!! ' + lives + ' lives left\nPress R to continue...');
-                }
-                else if(lives == 1)
-                {
-                    deathText.position.x = game.camera.position.x;
-                    deathText.setText('You died!!!! ' + lives + ' life left\nPress R to continue...');
-                }
-                else
-                {
-                     endGame();
-                }
-                
+                timer++;
+                counterText.setText('Level ' + level + '   Lives ' + lives + '   Time: ' + timer);
             }
+            if(lives < 1 && !gameOver && !win)
+            {
+                endGame();
+            }
+            if(!gameOver && !win)
+            {
+                counter++;
+
+                if(deathBool)
+                {
+                    if(lives == 2 )
+                    {
+                        if( tryAgainButton.inputEnabled == false){
+
+                            deathText.position.x = game.camera.position.x;
+                            deathText.setText('You win!!!! ' + lives + ' lives left\nPress R to continue...');
+
+                            tryAgainButton.inputEnabled = true;
+                            tryAgainButton.visible = true;
+                            tryAgainButton.position.x = game.camera.position.x;
+                            tryAgainButton.position.y = game.camera.position.y;
+                            game.world.bringToTop(tryAgainButton);
+                        }
+
+                    }
+                    else if(lives == 1)
+                    {
+                        if (tryAgainButton.inputEnabled == false){
+                            deathText.position.x = game.camera.position.x;
+                            deathText.setText('You win!!!! ' + lives + ' lives left\nPress R to continue...');
+
+                            tryAgainButton.inputEnabled = true;
+                            tryAgainButton.visible = true;
+                            tryAgainButton.position.x = game.camera.position.x;
+                            tryAgainButton.position.y = game.camera.position.y;
+                            game.world.bringToTop(tryAgainButton);
+                         }
+                    }
+                    else
+                    {
+                         endGame();
+                    }
+
+                }
+            }
+        } else{
+             if(level == 1){
+              animation.y -= 3000;
+              animation.x -= 3000;
+             } else {
+                 animation.y -= 1000;
+                 animation.x -= 3000;
+             }
+
         }
     }
 
@@ -442,11 +521,11 @@ $(function() {
         {
             var pos = [500,700, 1850,800, 2500,800]
         }
-       
+
         for (var i = 0;i < 3; i++)
         {
             var c = batGroup.create(pos[i*2],pos[(i*2)+1],'bat',0);
-           
+
             game.physics.enable(c);
             c.body.setSize(150, 65, 25, 10);
             c.animations.add('fly',[0,1,2,3,4,5],15,true);
@@ -470,7 +549,7 @@ $(function() {
         {
              var pos = [3350,800, 1400,1000, 3150,750];
         }
-       
+
         for (var i = 0;i < 3; i++)
         {
             var sp = spiralGroup.create(pos[i*2],pos[(i*2)+1],'spiral');
@@ -487,7 +566,7 @@ $(function() {
     {
         if(!deathBool)
         {
-             
+
              animation.body.velocity.setTo(0,0);
              game.add.tween(animation).to( { x: obj2.x, y: obj2.y }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
              game.add.tween(animation.scale).to( { x: .005, y: .005 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
@@ -510,7 +589,7 @@ $(function() {
             deathBool = true;
             animation.animations.play('split',15,false,false);
         }
-       
+
     }
 
     function walkAnimation()
@@ -552,6 +631,14 @@ $(function() {
        gameOver = true;
        counterText.destroy();
 
+        if (tryAgainButton.inputEnabled == false) {
+             tryAgainButton.inputEnabled = true;
+             tryAgainButton.visible = true;
+             tryAgainButton.position.x = game.camera.position.x;
+             tryAgainButton.position.y = game.camera.position.y;
+             game.world.bringToTop(tryAgainButton);
+        }
+
         text = game.add.text( 50, 600, "Game Over!!!", style );
        // text2 = game.add.text( 50, 250, "Your score was: " + score, style );
         text3 = game.add.text( 50, 650, "Press R to restart game!", style );
@@ -567,14 +654,14 @@ $(function() {
 
     function platHandler()
     {
-      
+
         jumpBool = true;
         animation.body.velocity.setTo(0,0);
     }
 
     function splitHandler()
     {
-      
+
         if(!deathBool)
         {
             deathBool = true;
@@ -583,32 +670,51 @@ $(function() {
             lives--;
 
         }
-                 
+
     }
 
     function endHandler()
     {
-        deathText.position.x = game.camera.position.x - 100;
-        if (level == 1)
-        {
-             win = true;
-            deathText.setText('You reached the goal!!!\nPress R to continue...');
+        if (end == false && start == true){
+
+            deathText.position.x = game.camera.position.x - 100;
+            if (level == 1)
+            {
+                 win = true;
+                deathText.setText('You lose!!!\nPress R to continue...');
+                 if( nextLevelButton.inputEnabled == false){
+
+                       nextLevelButton.inputEnabled = true;
+                       nextLevelButton.visible = true;
+                       nextLevelButton.position.x = game.camera.position.x;
+                       nextLevelButton.position.y = game.camera.position.y;
+                       game.world.bringToTop(nextLevelButton);
+                }
+            }
+            else
+            {
+                win = true;
+                deathText.setText('You lose!!!!!\nPress R to start a new game...');
+                if( nextLevelButton.inputEnabled == false){
+
+                       nextLevelButton.inputEnabled = true;
+                       nextLevelButton.visible = true;
+                       nextLevelButton.position.x = game.camera.position.x;
+                       nextLevelButton.position.y = game.camera.position.y;
+                       game.world.bringToTop(nextLevelButton);
+                }
+            }
+            end = true;
         }
-        else
-        {
-             win = true;
-            deathText.setText('You win congratulations!!!!!\nPress R to start a new game...');
-        }
-        
-       
+
+
     }
 
-  
+
     function resetGame()
     {
-        
-      
-       
+
+        game.camera.reset();
         if(level==1)
         {
             largePlats.destroy();
@@ -628,7 +734,7 @@ $(function() {
         }
          if(level == 2)
             { burn = false;}
-        
+
 
         if(win)
         {
@@ -642,6 +748,14 @@ $(function() {
               {
                 level = 1;
               }
+             nextLevelButton.visible = false;
+             nextLevelButton.inputEnabled = false;
+             game.world.sendToBack(nextLevelButton);
+
+        } else {
+             tryAgainButton.visible = false;
+             tryAgainButton.inputEnabled = false;
+             game.world.sendToBack(tryAgainButton);
         }
 
         animation.destroy();
@@ -651,9 +765,6 @@ $(function() {
         deathText.setText(' ');
         turnBool = false;
         deathBool = false;
-       
-
-       
 
         if(gameOver || win)
         {
@@ -676,6 +787,7 @@ $(function() {
             counter = 0;
             
             createGame(true);
+
         }
         else
         {
@@ -686,6 +798,7 @@ $(function() {
     }
 
     function update() {
+
         if (level == 1)
         {
             game.physics.arcade.collide(largePlats,animation,platHandler, null,this);
