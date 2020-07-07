@@ -14,7 +14,7 @@ $(function() {
     "use strict";
     
     var game = new Phaser.Game( 1000, 800, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
-    
+
      function preload() {
 
         //All levels
@@ -22,6 +22,7 @@ $(function() {
         game.load.image('nextlevel', 'assets/nextlevel.png')
 
         //level 1
+
         game.load.spritesheet('bcMan2', 'assets/BCSpriteSheet2.png',150,189);
         game.load.image('background', 'assets/jungle_back.png');
         game.load.image('spikes', 'assets/death_spikes.png');
@@ -34,20 +35,58 @@ $(function() {
         game.load.spritesheet('flag', 'assets/flag.png');
         game.load.spritesheet('bat', 'assets/batsheet.png',200,85);
         game.load.spritesheet('spiral', 'assets/spiral.png');
-        game.load.image('')
 
-        //level 2
-        game.load.spritesheet('bcMan2', 'assets/BCSpriteSheet2.png',150,189);
-        game.load.image('background2', 'assets/background2.png');
-        game.load.image('lava', 'assets/lava.png');
-        game.load.image('lava2', 'assets/lava2.png');
-        game.load.image('lava3', 'assets/lava3.png');
-        game.load.image('platform', 'assets/platform.png');
-        game.load.audio('music2', ['assets/What Beats Lava-.mp3', 'assets/What Beats Lava-.ogg']);
-        game.load.spritesheet('finalPlatform', 'assets/finalplatform.png');
 
         //level 3
         // game.load.audio('music', ['assets/Craved In.mp3', 'assets/Craved In.ogg']);
+    }
+
+    function assetLoad(level=1){
+
+        game.cache.destroy();
+         //All levels
+        game.load.image('tryagain', 'assets/tryagain.png')
+        game.load.image('nextlevel', 'assets/nextlevel.png')
+
+        //level 1
+        if (level == 1){
+            game.load.spritesheet('bcMan2', 'assets/BCSpriteSheet2.png',150,189);
+            game.load.image('background', 'assets/jungle_back.png');
+            game.load.image('spikes', 'assets/death_spikes.png');
+            game.load.image('small_plat', 'assets/small_plat.png');
+            game.load.image('large_plat', 'assets/large_plat.png');
+            game.load.image('long_plat', 'assets/long_plat.png');
+            game.load.audio('music', ['assets/Jungle Jingle.mp3', 'assets/Jungle Jingle.ogg']);
+            game.load.spritesheet('bcMan', 'assets/BCJungleSpriteSheet.png',150,189);
+            game.load.spritesheet('bCry', 'assets/BCCrySprite.png',80,80);
+            game.load.spritesheet('flag', 'assets/flag.png');
+            game.load.spritesheet('bat', 'assets/batsheet.png',200,85);
+            game.load.spritesheet('spiral', 'assets/spiral.png');
+            game.load.start();
+        }
+
+
+        //level 2
+        console.log(level)
+        if (level == 2)
+        {
+            game.load.spritesheet('bcMan2', 'assets/BCSpriteSheet2.png',150,189);
+            game.load.image('background2', 'assets/background2.png');
+            game.load.image('lava', 'assets/lava.png');
+            game.load.image('lava2', 'assets/lava2.png');
+            game.load.image('lava3', 'assets/lava3.png');
+            game.load.image('platform', 'assets/platform.png');
+            game.load.audio('music2', ['assets/What Beats Lava-.mp3', 'assets/What Beats Lava-.ogg']);
+            game.load.spritesheet('finalPlatform', 'assets/finalplatform.png');
+            game.load.spritesheet('flag', 'assets/flag.png');
+            game.load.spritesheet('bat', 'assets/batsheet.png',200,85);
+            game.load.spritesheet('spiral', 'assets/spiral.png');
+            game.load.start();
+        }
+
+        game.load.onLoadComplete.add(function() {
+            createGame(true);
+        }, this);
     }
     
     var music;
@@ -143,22 +182,19 @@ $(function() {
     $(document).on('touchstart', '#left-button', function(){
         leftButtonP = true;
     });
-    $(document).on('touchend', '#left-button', function(e){
-        e.preventDefault();
+    $(document).on('touchend', '#left-button', function(){
         leftButtonP = false;
     });
     $(document).on('touchstart', '#right-button', function(){
         rightButtonP = true;
     });
-    $(document).on('touchend', '#right-button', function(e){
-        e.preventDefault();
+    $(document).on('touchend', '#right-button', function(){
         rightButtonP = false;
     });
     $(document).on('touchstart', '#jump-button', function(){
         jumpButtonP = true;
     });
-    $(document).on('touchend', '#jump-button', function(e){
-        e.preventDefault();
+    $(document).on('touchend', '#jump-button', function(){
         jumpButtonP = false;
     });
 
@@ -193,7 +229,7 @@ $(function() {
 
     var playMusic = function(touch=false) {
 
-         if(resetMusic)
+         if(resetMusic && !win)
          {
                 if (music.context != null)
                 {
@@ -739,6 +775,7 @@ $(function() {
         if(win)
         {
               background.destroy();
+              music.stop();
               music.destroy();
               if(level == 1)
               {
@@ -785,8 +822,9 @@ $(function() {
             }
             lives = 3;
             counter = 0;
-            
-            createGame(true);
+
+            $('#loading').show();
+            assetLoad(level);
 
         }
         else
